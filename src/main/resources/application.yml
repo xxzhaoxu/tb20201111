@@ -1,0 +1,48 @@
+
+server:
+  port: 8081
+
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://127.0.0.1:3306/db_formdata?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC&useAffectedRows=true
+    username: root
+    password: zhaoxuniubi
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+
+  servlet:
+    multipart:
+      max-request-size: 10MB   # 上传文件总的最大值
+      max-file-size: 10MB  # 单个文件的最大值
+  devtools:
+    restart:
+      enabled: true
+      exclude: templates
+  thymeleaf:
+    enabled: true  #开启thymeleaf视图解析
+    encoding: utf-8  #编码
+    cache: false  #是否使用缓存
+    mode: HTML  #严格的HTML语法模式
+    suffix: .html  #后缀名
+  resources:
+    static-locations: classpath:/static
+mybatis:
+  mapper-locations: classpath:mapping/*.xml  # a注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.jinxu.rabbit.entity  # 注意：对应实体类的路径
+logging:
+  level:
+    com.dk.code.pointapp.mapper: debug

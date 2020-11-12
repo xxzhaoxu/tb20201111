@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.formdata.mapper.CzVoMapper">
+  <resultMap id="BaseResultMap" type="com.zx.formdata.entity.CzVo">
+    <id column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="cz" jdbcType="VARCHAR" property="cz" />
+    <result column="thick" jdbcType="VARCHAR" property="thick" />
+    <result column="wide" jdbcType="VARCHAR" property="wide" />
+    <result column="cz_price" jdbcType="VARCHAR" property="czPrice" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cid, cz, thick, wide, cz_price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_cz
+    where cid = #{cid,jdbcType=INTEGER}
+  </select>
+  <select id="selectCzVoList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_cz
+    <where>
+      <if test="cz!=null">
+         cz = #{cz}
+      </if>
+      <if test="thick!=null">
+       and  thick = #{thick}
+      </if>
+      <if test="wide!=null">
+        and wide = #{wide}
+      </if>
+    </where>
+     order by cz desc limit #{start},#{end}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_cz
+    where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="cid" parameterType="com.zx.formdata.entity.CzVo">
+    insert into t_cz
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="cz != null">
+        cz,
+      </if>
+      <if test="thick != null">
+        thick,
+      </if>
+      <if test="wide != null">
+        wide,
+      </if>
+      <if test="czPrice != null">
+        cz_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="cz != null">
+        #{cz,jdbcType=VARCHAR},
+      </if>
+      <if test="thick != null">
+        #{thick,jdbcType=VARCHAR},
+      </if>
+      <if test="wide != null">
+        #{wide,jdbcType=VARCHAR},
+      </if>
+      <if test="czPrice != null">
+        #{czPrice,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.CzVo">
+    update t_cz
+    <set>
+      <if test="cz != null">
+        cz = #{cz,jdbcType=VARCHAR},
+      </if>
+      <if test="thick != null">
+        thick = #{thick,jdbcType=VARCHAR},
+      </if>
+      <if test="wide != null">
+        wide = #{wide,jdbcType=VARCHAR},
+      </if>
+      <if test="czPrice != null">
+        cz_price = #{czPrice,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+
+</mapper>

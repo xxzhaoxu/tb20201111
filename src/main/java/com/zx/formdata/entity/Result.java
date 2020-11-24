@@ -17,27 +17,30 @@ public class Result<T> implements Serializable {
     /**
      * 是否成功
      */
-    private Boolean success; //是否成功
+    private Boolean success;
 
     /**
      * 服务器当前时间戳
      */
-    private Long timeStamp = System.currentTimeMillis()/1000; //服务器当前时间戳
+    private Long timeStamp = System.currentTimeMillis()/1000;
 
     /**
      * 成功数据
      */
-    private T data;//成功数据
-
+    private T data;
     /**
      * 错误码
      */
-    private Integer code; //错误码
+    private Integer code;
 
     /**
      * 错误描述
      */
-    private String msg; //错误描述
+    private String msg;
+    /**
+     * token
+     */
+    private String token;
 
     public static Result ofSuccess() {
         Result result = new Result();
@@ -51,6 +54,24 @@ public class Result<T> implements Serializable {
         Result result = new Result();
         result.success = true;
         result.setData(data);
+        result.setCode(200);
+        result.setMsg("success");
+        return result;
+    }
+    public static Result ofSuccess(Object data,String token) {
+        Result result = new Result();
+        result.success = true;
+        result.setData(data);
+        result.setCode(200);
+        result.setToken(token);
+        result.setMsg("success");
+        return result;
+    }
+
+    public static Result ofSuccess(String token){
+        Result result = new Result();
+        result.success = true;
+        result.setToken(token);
         result.setCode(200);
         result.setMsg("success");
         return result;

@@ -1,13 +1,13 @@
 
 server:
-  port: 8081
+  port: 9090
 
 spring:
   datasource:
     name: test
-    url: jdbc:mysql://127.0.0.1:3306/db_formdata?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC&useAffectedRows=true
+    url: jdbc:mysql://115.159.193.114:3306/db_formdata?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC&useAffectedRows=true
     username: root
-    password: zhaoxuniubi
+    password: zhao2020
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     filters: stat
@@ -26,23 +26,35 @@ spring:
 
   servlet:
     multipart:
-      max-request-size: 10MB   # 上传文件总的最大值
-      max-file-size: 10MB  # 单个文件的最大值
+      max-request-size: 10MB   
+      max-file-size: 10MB
   devtools:
     restart:
       enabled: true
       exclude: templates
   thymeleaf:
-    enabled: true  #开启thymeleaf视图解析
-    encoding: utf-8  #编码
-    cache: false  #是否使用缓存
-    mode: HTML  #严格的HTML语法模式
-    suffix: .html  #后缀名
+    enabled: true
+    encoding: utf-8
+    cache: false
+    mode: HTML
+    suffix: .html
   resources:
     static-locations: classpath:/static
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    database: 3
+    timeout: 5000
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1
+
 mybatis:
-  mapper-locations: classpath:mapping/*.xml  # a注意：一定要对应mapper映射xml文件的所在路径
-  type-aliases-package: com.jinxu.rabbit.entity  # 注意：对应实体类的路径
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.zx.formdata.entity
 logging:
   level:
-    com.dk.code.pointapp.mapper: debug
+    com.zx.formdata.mapper: debug

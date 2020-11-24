@@ -15,6 +15,26 @@ public class CzVo {
 
     private String czPrice;
 
+    private String len;
+
+    private Long createTime;
+
+    public Long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getLen() {
+        return len;
+    }
+
+    public void setLen(String len) {
+        this.len = len;
+    }
+
     public Integer getCid() {
         return cid;
     }

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.formdata.mapper.MachiniVoMapper">
+  <resultMap id="BaseResultMap" type="com.zx.formdata.entity.MachiniVo">
+    <id column="mid" jdbcType="INTEGER" property="mid" />
+    <result column="surface" jdbcType="VARCHAR" property="surface" />
+    <result column="film" jdbcType="VARCHAR" property="film" />
+    <result column="m_price" jdbcType="VARCHAR" property="mPrice" />
+    <result column="m_price" jdbcType="VARCHAR" property="mPrice" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="wide" jdbcType="VARCHAR" property="wide" />
+    <result column="thick" jdbcType="VARCHAR" property="thick" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    mid, surface, film, m_price,level ,wide,thick
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_machini
+    where mid = #{mid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAllMachiniVoList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+     from t_machini
+    <where>
+      <if test="surface!=null">
+        surface = #{surface}
+      </if>
+      <if test="film!=null">
+        and film = #{film}
+      </if>
+    </where>
+    order by mid asc limit #{start},#{end}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(0) from t_machini
+    <where>
+      <if test="surface!=null">
+        surface = #{surface}
+      </if>
+      <if test="film!=null">
+        and film = #{film}
+      </if>
+    </where>
+  </select>
+  <select id="selectAllSurface" resultType="java.lang.String">
+    select surface from  t_machini group  by surface;
+  </select>
+  <select id="selectAllFilm" resultType="java.lang.String">
+    select film from t_machini group by film;
+  </select>
+  <select id="selectMachiniVo" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" /> from t_machini
+    <where>
+      surface = #{surface}
+      and film = #{film}
+      and level =#{level}
+      and wide = #{wide}
+
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_machini
+    where mid = #{mid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteAll">
+      delete from t_machini
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zx.formdata.entity.MachiniVo">
+    insert into t_machini
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mid != null">
+        mid,
+      </if>
+      <if test="surface != null">
+        surface,
+      </if>
+      <if test="film != null">
+        film,
+      </if>
+      <if test="mPrice != null">
+        m_price,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="wide != null">
+        wide,
+      </if>
+      <if test="thick != null">
+        thick,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mid != null">
+        #{mid,jdbcType=INTEGER},
+      </if>
+      <if test="surface != null">
+        #{surface,jdbcType=VARCHAR},
+      </if>
+      <if test="film != null">
+        #{film,jdbcType=VARCHAR},
+      </if>
+      <if test="mPrice != null">
+        #{mPrice,jdbcType=VARCHAR},
+      </if>
+       <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="wide != null">
+        #{wide,jdbcType=VARCHAR},
+      </if>
+      <if test="thick != null">
+        #{thick,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <insert id="insertMachiniVoList">
+        insert into t_machini (surface,film,m_price,thick,wide,level) VALUES
+      <foreach collection="list" item="machini" separator=",">
+        (#{machini.surface},#{machini.film},#{machini.mPrice},#{machini.thick},#{machini.wide},#{machini.level})
+      </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.MachiniVo">
+    update t_machini
+    <set>
+      <if test="surface != null">
+        surface = #{surface,jdbcType=VARCHAR},
+      </if>
+      <if test="film != null">
+        film = #{film,jdbcType=VARCHAR},
+      </if>
+      <if test="mPrice != null">
+        m_price = #{mPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="wide != null">
+        wide = #{wide,jdbcType=VARCHAR},
+      </if>
+      <if test="thick != null">
+         thick = #{thick,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+           level = #{level,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+
+</mapper>

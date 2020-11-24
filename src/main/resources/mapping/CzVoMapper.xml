@@ -7,9 +7,11 @@
     <result column="thick" jdbcType="VARCHAR" property="thick" />
     <result column="wide" jdbcType="VARCHAR" property="wide" />
     <result column="cz_price" jdbcType="VARCHAR" property="czPrice" />
+    <result column="len" jdbcType="VARCHAR" property="len" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    cid, cz, thick, wide, cz_price
+    cid, cz, thick, wide, cz_price,len,create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -31,12 +33,77 @@
       <if test="wide!=null">
         and wide = #{wide}
       </if>
+      <if test="len!=null">
+        and len = #{len}
+      </if>
+
     </where>
      order by cz desc limit #{start},#{end}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+    select
+    count(0)
+    from t_cz
+    <where>
+      <if test="cz!=null">
+        cz = #{cz}
+      </if>
+      <if test="thick!=null">
+        and  thick = #{thick}
+      </if>
+      <if test="wide!=null">
+        and wide = #{wide}
+      </if>
+       <if test="len!=null">
+        and len = #{len}
+      </if>
+    </where>
+  </select>
+    <select id="selectAllCz" resultType="java.lang.String">
+      select cz from t_cz group  by cz;
+    </select>
+  <select id="selectAllThick" resultType="java.lang.String">
+    select thick from t_cz
+     <where>
+       <if test="cz!=null">
+         cz = #{cz}
+       </if>
+     </where>
+     group by thick;
+  </select>
+  <select id="selectAllWide" resultType="java.lang.String">
+    select wide from t_cz
+    <where>
+      <if test="cz!=null">
+        cz = #{cz}
+      </if>
+      <if test="thick!=null">
+        and  thick = #{thick}
+      </if>
+    </where>
+     group by wide;
+  </select>
+  <select id="selectAllLen" resultType="java.lang.String">
+    select len from t_cz
+     group by len;
+  </select>
+  <select id="selectCzvo" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" /> from t_cz
+    <where>
+      cz = #{cz}
+      and thick = #{thick}
+      and wide = #{wide}
+    </where>
+  </select>
+  <select id="selectCreateTime" resultType="java.lang.Long">
+    select create_time  from  t_cz limit 1,1;
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_cz
     where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteAll">
+     delete from t_cz
   </delete>
 
   <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="cid" parameterType="com.zx.formdata.entity.CzVo">
@@ -57,6 +124,12 @@
       <if test="czPrice != null">
         cz_price,
       </if>
+       <if test="len != null">
+         len,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cid != null">
@@ -74,7 +147,19 @@
       <if test="czPrice != null">
         #{czPrice,jdbcType=VARCHAR},
       </if>
+       <if test="len != null">
+        #{len,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
     </trim>
+  </insert>
+  <insert id="insertSelectiveList">
+     insert into t_cz  (cz,thick,wide,cz_price,len,create_time) values
+    <foreach collection="list" item="czVo" separator=",">
+      (#{czVo.cz},#{czVo.thick},#{czVo.wide},#{czVo.czPrice},#{czVo.len},#{czVo.createTime})
+    </foreach>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.CzVo">
     update t_cz
@@ -90,6 +175,9 @@
       </if>
       <if test="czPrice != null">
         cz_price = #{czPrice,jdbcType=VARCHAR},
+      </if>
+       <if test="len != null">
+         len = #{len,jdbcType=VARCHAR},
       </if>
     </set>
     where cid = #{cid,jdbcType=INTEGER}

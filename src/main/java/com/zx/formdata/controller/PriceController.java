@@ -329,14 +329,14 @@ public class PriceController {
             return Result.ofFail(400,"没有材质对应的密度");
         }
         String density = czDensity.getDensity();
-        BigDecimal singlePrice = sum1.divide(new BigDecimal(length),6,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(len)).setScale(2,BigDecimal.ROUND_UP);
-        BigDecimal taxSinglePrice = singlePrice.divide(new BigDecimal(0.91),2,BigDecimal.ROUND_UP);
+        BigDecimal singlePrice = sum1.divide(new BigDecimal(length),6,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(len)).setScale(0,BigDecimal.ROUND_UP);
+        BigDecimal taxSinglePrice = singlePrice.divide(new BigDecimal(0.91),0,BigDecimal.ROUND_UP);
         BigDecimal kgPrice = singlePrice.divide(
                         new BigDecimal(thick)//厚度
                         .multiply(new BigDecimal(wide)) //宽度
                         .multiply(new BigDecimal(len))//长度
                         .multiply(new BigDecimal(density))//密度
-                ,6).setScale(2,BigDecimal.ROUND_UP);
+                ,2,BigDecimal.ROUND_UP);
         BigDecimal taxKgPrice = kgPrice.divide(new BigDecimal(0.91),2,BigDecimal.ROUND_UP);
         JSONObject reJson = new JSONObject();
         reJson.put("singlePrice",singlePrice);

@@ -39,6 +39,10 @@ public class UserController {
         if (!userVo.getPassWord().equals(md5Pswd)){
             return Result.ofFail(400,"密码不正确");
         }
+        UserRole userRole =  userRoleMapper.selectbyUid(userVo.getUid());
+        if (userRole==null){
+            return Result.ofFail(400,"账号尚未分配角色，请联系管理员");
+        }
         String token =  JwtUtil.sign(account,md5Pswd);
         return Result.ofSuccess(userVo,token);
     }

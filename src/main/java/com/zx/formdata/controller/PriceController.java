@@ -6,10 +6,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.zx.formdata.entity.*;
-import com.zx.formdata.mapper.CzDensityMapper;
-import com.zx.formdata.mapper.CzVoMapper;
-import com.zx.formdata.mapper.MachiniVoMapper;
-import com.zx.formdata.mapper.ThickLevelMapper;
+import com.zx.formdata.mapper.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 public class PriceController {
@@ -32,6 +30,9 @@ public class PriceController {
     private ThickLevelMapper thickLevelMapper;
     @Resource
     private CzDensityMapper czDensityMapper;
+
+    @Resource
+    private JbOfferVoMapper jbOfferVoMapper;
     @GetMapping("findCzPriceList")
     public Result findCzPriceList(
             @RequestParam(required = false,name = "cz")String cz,
@@ -256,6 +257,84 @@ public class PriceController {
 
             czVoMapper.deleteAll();
             czVoMapper.insertSelectiveList(czVoList);
+
+
+
+            ExcelReader jbExcelReader = ExcelUtil.getReader(file.getInputStream(),2);
+            int index = 0;
+            List<List<Object>> jbLists =  jbExcelReader.read();
+            String name="";
+            jbOfferVoMapper.deleteAll();
+            for(int j=1;j<jbLists.size();j++) {
+                List<Object> list = jbLists.get(j);
+//                index++;
+//                for (Object o : list) {
+//                    if (o != null) {
+//                        if (o.equals("<开始>")) {
+//                            index = 0;
+//                            continue loop1;
+//                        }
+//                        break;
+//                    }
+//                }
+//                if (index == 1) {
+//                    for (Object o : list) {
+//                        if (o != null) {
+//                            name = String.valueOf(o);
+//                            continue loop1;
+//                        }
+//                    }
+//                }
+                //跳过表头
+//                if (index == 2) {
+//                    continue;
+//                }
+//                if ("".equals(name)) {
+//                    continue;
+//                }
+                int len = list.size();
+                JbOfferVo jbOfferVo = new JbOfferVo();
+                loop2:
+                for (int i = 0; i < len; i++) {
+                    System.out.print(list.get(i));
+                    String value = list.get(i) == null ? "" : String.valueOf(list.get(i));
+                    loop3:
+                    switch (i) {
+                        case 0:
+                            jbOfferVo.setName(value);
+                            break loop3;
+                        case 1:
+                            jbOfferVo.setSurface(value);
+                            break loop3;
+                        case 2:
+                            jbOfferVo.setPlace(value);
+                            break loop3;
+                        case 3:
+                            jbOfferVo.setThick(value);
+                            break loop3;
+                        case 4:
+                            jbOfferVo.setjType(value);
+                            break loop3;
+                        case 5:
+                            jbOfferVo.setTaxPrice(value);
+                            break loop3;
+                        case 6:
+                            jbOfferVo.setPrice(value);
+                            break loop3;
+                        case 7:
+                            jbOfferVo.setWeight(value);
+                            break loop3;
+                        case 8:
+                            jbOfferVo.setRemark(value);
+                            break loop3;
+                        default:
+                            break loop3;
+                    }
+                }
+                jbOfferVo.setCreateTime(System.currentTimeMillis());
+                jbOfferVoMapper.insertSelective(jbOfferVo);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -434,4 +513,123 @@ public class PriceController {
         return Result.ofSuccess();
     }
 
+    @PostMapping("uploadJbFile")
+    public Result  uploadJbFile(MultipartFile file){
+        if (file.isEmpty()) {
+            return Result.ofFail(400,"上传失败");
+        }
+        String suffix =   FileUtil.getSuffix(file.getOriginalFilename());
+        if (!(suffix.equals("xlsx")||suffix.equals("xls"))){
+            return Result.ofFail(400,"只能上传excel文件");
+        }
+
+        jbOfferVoMapper.deleteAll();
+        ExcelReader  excelReader = null;
+        try {
+            excelReader = ExcelUtil.getReader(file.getInputStream(),0);
+            int index = 0;
+            List<List<Object>> lists =  excelReader.read();
+            String name="";
+            loop1:for(List<Object> list:lists){
+                index++;
+                for (Object o : list) {
+                    if (o!=null){
+                        if (o.equals("<开始>")){
+                            index = 0;
+                            continue loop1;
+                        }
+                        break;
+                    }
+                }
+                if (index==1){
+                    for (Object o : list) {
+                        if (o!=null){
+                            name = String.valueOf(o);
+                            continue loop1;
+                        }
+                    }
+                }
+                //跳过表头
+                if (index==2){
+                    continue ;
+                }
+                if ("".equals(name)){
+                    continue;
+                }
+                 int len = list.size();
+                 JbOfferVo jbOfferVo = new JbOfferVo();
+               loop2: for (int i = 0; i < len; i++) {
+                    System.out.print(list.get(i));
+                    String value = list.get(i)==null?"":String.valueOf(list.get(i));
+                    loop3:   switch (i){
+                        case 0:jbOfferVo.setThick(value);
+                        break loop3;
+                        case 1: jbOfferVo.setjType(value);
+                        break loop3;
+                        case 2:jbOfferVo.setTaxPrice(value);
+                        break loop3;
+                        case 3:jbOfferVo.setPrice(value);
+                        break loop3;
+                        case 4:jbOfferVo.setWeight(value);
+                        break loop3;
+                        default:break loop3 ;
+                    }
+                }
+                jbOfferVo.setName(name);
+                jbOfferVo.setCreateTime(System.currentTimeMillis());
+                jbOfferVoMapper.insertSelective(jbOfferVo);
+            }
+        }catch (Exception e){
+               e.printStackTrace();
+            return Result.ofFail(500,"系统错误");
+        }finally {
+            if (excelReader!=null){
+                excelReader.close();
+            }
+
+        }
+        return Result.ofSuccess();
+    }
+
+    @GetMapping("findBjofferList")
+    public Result findBjofferList(@RequestParam(required = false,name = "name")String name,
+                                  @RequestParam(required = false,name = "surface")String surface,
+                                  @RequestParam(required = false,name = "place")String place,
+                                  @RequestParam(required = false,name = "thick")String thick,
+                                  @RequestParam(required = false,name = "jbType")String jbType,
+                                  @RequestParam("pageIndex")Integer pageIndex,
+                                  @RequestParam("pageSize")Integer pageSize
+                                  ){
+        JSONObject jsonObject = new JSONObject();
+        Integer start = (pageIndex-1)*pageSize;
+        List<JbOfferVo> jbOfferVoList = jbOfferVoMapper.selectJbOfferVoList(name,surface,place,thick,jbType,start,pageSize);
+        Integer count = jbOfferVoMapper.selectJbOfferVoCount(name,surface,place,thick,jbType);
+        jsonObject.put("count",count);
+        jsonObject.put("list",jbOfferVoList);
+        return Result.ofSuccess(jsonObject);
+    }
+
+    @GetMapping("selectAllJbofferCz")
+    public Result selectAllJbofferCz(){
+        return Result.ofSuccess(jbOfferVoMapper.selectJbofferNameList());
+    }
+
+    @GetMapping("findJbSurface")
+    public Result findJbSurface(){
+        return Result.ofSuccess(jbOfferVoMapper.selectSurface());
+    }
+
+    @GetMapping("findJbPlace")
+    public Result findJbPlace(){
+        return Result.ofSuccess(jbOfferVoMapper.selectPlace());
+    }
+
+    @GetMapping("findJbThick")
+    public Result findJbThick(){
+        return Result.ofSuccess(jbOfferVoMapper.selectThick());
+    }
+    @GetMapping("findJbType")
+    public Result findJbType(){
+        return Result.ofSuccess(jbOfferVoMapper.selectJtype());
+    }
 }

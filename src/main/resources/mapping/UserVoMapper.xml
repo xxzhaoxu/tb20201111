@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.formdata.mapper.UserVoMapper">
+  <resultMap id="BaseResultMap" type="com.zx.formdata.entity.UserVo">
+    <id column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="pass_word" jdbcType="VARCHAR" property="passWord" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    uid, user_name, pass_word, account, phone
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_user
+    where uid = #{uid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_user
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zx.formdata.entity.UserVo">
+    insert into t_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="passWord != null">
+        pass_word,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null">
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.UserVo">
+    update t_user
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null">
+        pass_word = #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=INTEGER}
+  </update>
+  <select id="selectUserByAccount" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include> from t_user where  account = #{account}
+  </select>
+  <select id="selectUserList" resultMap="BaseResultMap">
+        select uid,user_name,account,phone from  t_user
+        <where>
+          <if test="userName!=null">
+            user_name = #{userName}
+          </if>
+          <if test="phone!=null">
+            phone = #{phone}
+          </if>
+        </where>
+        order by uid desc limit #{start} ,#{end}
+  </select>
+  <select id="selectUserCount" resultType="java.lang.Integer">
+    select count(0) from t_user
+    <where>
+      <if test="userName!=null">
+        user_name = #{userName}
+      </if>
+      <if test="phone!=null">
+        phone = #{phone}
+      </if>
+    </where>
+  </select>
+    <select id="hasOtherAccount" resultType="com.zx.formdata.entity.UserVo">
+        select <include refid="Base_Column_List"></include> from t_user where uid <![CDATA[ <> ]]> #{uid} and account = #{account}
+    </select>
+</mapper>

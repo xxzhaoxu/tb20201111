@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.formdata.mapper.JbOfferVoMapper">
+  <resultMap id="BaseResultMap" type="com.zx.formdata.entity.JbOfferVo">
+    <id column="jo_id" jdbcType="INTEGER" property="joId" />
+    <result column="thick" jdbcType="VARCHAR" property="thick" />
+    <result column="j_type" jdbcType="VARCHAR" property="jType" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+    <result column="tax_price" jdbcType="VARCHAR" property="taxPrice" />
+    <result column="weight" jdbcType="VARCHAR" property="weight" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="surface" jdbcType="VARCHAR" property="surface" />
+    <result column="place" jdbcType="VARCHAR" property="place" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    jo_id, thick, j_type, price, tax_price, weight, create_time, name,place ,surface,remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_jb_offer
+    where jo_id = #{joId,jdbcType=INTEGER}
+  </select>
+  <select id="selectJbofferName" resultType="java.lang.String">
+    select  name from t_jb_offer
+    <where>
+      <if test="name!=null">
+        name =#{name}
+      </if>
+    </where>
+    group by name
+    limit #{start},#{end}
+  </select>
+  <select id="selectJbOfferVoList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_jb_offer
+    <where>
+        <if test="name!=null">
+          name = #{name}
+        </if>
+        <if test="surface!=null">
+          and surface = #{surface}
+        </if>
+        <if test="place!=null">
+          and place = #{place}
+        </if>
+        <if test="thick!=null">
+          and thick = #{thick}
+        </if>
+        <if test="jbType!=null">
+          and j_type = #{jbType}
+        </if>
+    </where>
+
+    limit #{start},#{end}
+  </select>
+  <select id="selectJbofferNameList" resultType="java.lang.String">
+    select name from t_jb_offer group by name;
+  </select>
+  <select id="selectJbOfferVoCount" resultType="java.lang.Integer">
+    select count(0) from t_jb_offer
+    <where>
+        <if test="name!=null">
+          name = #{name}
+        </if>
+        <if test="surface!=null">
+          and surface = #{surface}
+        </if>
+        <if test="place!=null">
+          and place = #{place}
+        </if>
+        <if test="thick!=null">
+          and thick = #{thick}
+        </if>
+        <if test="jbType!=null">
+          and j_type = #{jbType}
+        </if>
+     </where>
+  </select>
+  <select id="selectSurface" resultType="java.lang.String">
+    select surface  from t_jb_offer group by surface;
+  </select>
+  <select id="selectPlace" resultType="java.lang.String">
+    select place from t_jb_offer group by   place;
+  </select>
+  <select id="selectThick" resultType="java.lang.String">
+    select thick from t_jb_offer group by thick;
+  </select>
+  <select id="selectJtype" resultType="java.lang.String">
+    select j_type from  t_jb_offer group by j_type;
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_jb_offer
+    where jo_id = #{joId,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteAll">
+       delete from t_jb_offer
+    </delete>
+
+  <insert id="insertSelective" parameterType="com.zx.formdata.entity.JbOfferVo">
+    insert into t_jb_offer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="joId != null">
+        jo_id,
+      </if>
+      <if test="thick != null">
+        thick,
+      </if>
+      <if test="jType != null">
+        j_type,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="taxPrice != null">
+        tax_price,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="surface != null">
+        surface,
+      </if>
+       <if test="place != null">
+         place,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="joId != null">
+        #{joId,jdbcType=INTEGER},
+      </if>
+      <if test="thick != null">
+        #{thick,jdbcType=VARCHAR},
+      </if>
+      <if test="jType != null">
+        #{jType,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="taxPrice != null">
+        #{taxPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="surface != null">
+        #{surface,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null">
+        #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.JbOfferVo">
+    update t_jb_offer
+    <set>
+      <if test="thick != null">
+        thick = #{thick,jdbcType=VARCHAR},
+      </if>
+      <if test="jType != null">
+        j_type = #{jType,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="taxPrice != null">
+        tax_price = #{taxPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null">
+        place = #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="surface != null">
+        surface = #{surface,jdbcType=VARCHAR},
+      </if>
+     <if test="remark != null">
+       remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where jo_id = #{joId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.formdata.mapper.PermissionVoMapper">
+  <resultMap id="BaseResultMap" type="com.zx.formdata.entity.PermissionVo">
+    <id column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="parant_id" jdbcType="INTEGER" property="parantId" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="text" jdbcType="VARCHAR" property="text" />
+    <result column="expand" jdbcType="VARCHAR" property="expand" />
+    <result column="selected" jdbcType="VARCHAR" property="selected" />
+    <result column="disabled" jdbcType="VARCHAR" property="disabled" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+  </resultMap>
+
+  <resultMap id="TreeResultMap" type="com.zx.formdata.entity.PermissionVo">
+    <id column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="parant_id" jdbcType="INTEGER" property="parantId" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="text" jdbcType="VARCHAR" property="text" />
+    <result column="expand" jdbcType="VARCHAR" property="expand" />
+    <result column="selected" jdbcType="VARCHAR" property="selected" />
+    <result column="disabled" jdbcType="VARCHAR" property="disabled" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="checked" jdbcType="VARCHAR" property="checked" />
+    <collection property="permissionVoList"  ofType="com.zx.formdata.entity.PermissionVo" column="pid" select="getMenuChildren"></collection>
+  </resultMap>
+
+  <resultMap id="PermissionResultMap" type="com.zx.formdata.entity.PermissionVoResult">
+    <id column="pid" jdbcType="INTEGER" property="pid" />
+    <id column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="parant_id" jdbcType="INTEGER" property="parantId" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="text" jdbcType="VARCHAR" property="text" />
+    <result column="expand" jdbcType="VARCHAR" property="expand" />
+    <result column="selected" jdbcType="VARCHAR" property="selected" />
+    <result column="disabled" jdbcType="VARCHAR" property="disabled" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="checked" jdbcType="VARCHAR" property="checked" />
+    <collection property="permissionVoList"  ofType="com.zx.formdata.entity.PermissionVoResult" column="{pid=pid}" select="getMenuChildren2"></collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    pid, permission_name, url, parant_id, icon, text, expand, selected, disabled, router,checked
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_permission
+    where pid = #{pid,jdbcType=INTEGER}
+  </select>
+  <select id="selectPermissionTreeList" resultMap="TreeResultMap">
+        select  <include refid="Base_Column_List" /> from t_permission where parant_id = '0'
+  </select>
+  <select id="getMenuChildren" resultMap="TreeResultMap">
+        select  <include refid="Base_Column_List" /> from t_permission where parant_id = #{pid}
+  </select>
+  <select id="selectPidListByUid" resultType="java.lang.Integer">
+    SELECT
+	t_permission.pid
+    FROM
+	t_user
+	LEFT JOIN t_user_role ON t_user.uid = t_user_role.urid
+	LEFT JOIN t_role ON t_role.rid = t_user_role.roleId
+	LEFT JOIN	t_role_permission on t_role_permission.roleId = t_role.rid
+	LEFT JOIN t_permission on t_role_permission.permissionId = t_permission.pid
+	WHERE t_user.uid = #{uid}
+  </select>
+  <select id="selectPermission" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" /> from t_permission
+     <where>
+        parant_id = #{parentId}
+        and pid in
+            <foreach item="item" collection="pidList" separator="," open="(" close=")" index="">
+                 #{item}
+            </foreach>
+     </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_permission
+    where pid = #{pid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zx.formdata.entity.PermissionVo">
+    insert into t_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="permissionName != null">
+        permission_name,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="parantId != null">
+        parant_id,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="text != null">
+        text,
+      </if>
+      <if test="expand != null">
+        expand,
+      </if>
+      <if test="selected != null">
+        selected,
+      </if>
+      <if test="disabled != null">
+        disabled,
+      </if>
+      <if test="router != null">
+        router,
+      </if>
+        <if test="checked != null">
+            checked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pid != null">
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="permissionName != null">
+        #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="parantId != null">
+        #{parantId,jdbcType=INTEGER},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="text != null">
+        #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="expand != null">
+        #{expand,jdbcType=VARCHAR},
+      </if>
+      <if test="selected != null">
+        #{selected,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null">
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="router != null">
+        #{router,jdbcType=VARCHAR},
+      </if>
+        <if test="checked != null">
+        #{checked,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.PermissionVo">
+    update t_permission
+    <set>
+      <if test="permissionName != null">
+        permission_name = #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="parantId != null">
+        parant_id = #{parantId,jdbcType=INTEGER},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="text != null">
+        text = #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="expand != null">
+        expand = #{expand,jdbcType=VARCHAR},
+      </if>
+      <if test="selected != null">
+        selected = #{selected,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null">
+        disabled = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="router != null">
+        router = #{router,jdbcType=VARCHAR},
+      </if>
+        <if test="checked != null">
+            checked = #{checked,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where pid = #{pid,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.formdata.mapper.CzDensityMapper">
+  <resultMap id="BaseResultMap" type="com.zx.formdata.entity.CzDensity">
+    <id column="cd_id" jdbcType="INTEGER" property="cdId" />
+    <result column="cz" jdbcType="VARCHAR" property="cz" />
+    <result column="density" jdbcType="VARCHAR" property="density" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cd_id, cz, density, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_cz_density
+    where cd_id = #{cdId,jdbcType=INTEGER}
+  </select>
+    <select id="selectCzDensityList" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from t_cz_density
+    </select>
+  <select id="selectByCz" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_cz_density
+    where
+    cz = #{cz}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_cz_density
+    where cd_id = #{cdId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zx.formdata.entity.CzDensity">
+    insert into t_cz_density
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cdId != null">
+        cd_id,
+      </if>
+      <if test="cz != null">
+        cz,
+      </if>
+      <if test="density != null">
+        density,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cdId != null">
+        #{cdId,jdbcType=INTEGER},
+      </if>
+      <if test="cz != null">
+        #{cz,jdbcType=VARCHAR},
+      </if>
+      <if test="density != null">
+        #{density,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zx.formdata.entity.CzDensity">
+    update t_cz_density
+    <set>
+      <if test="cz != null">
+        cz = #{cz,jdbcType=VARCHAR},
+      </if>
+      <if test="density != null">
+        density = #{density,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where cd_id = #{cdId,jdbcType=INTEGER}
+  </update>
+
+</mapper>
